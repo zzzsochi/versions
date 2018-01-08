@@ -2,7 +2,10 @@
 
 import argparse
 import os
+import sys
 from time import time
+
+VERSION = '2.0'
 
 
 def int2base(num, base, numerals="0123456789abcdefghijklmnopqrstuvwxyz"):
@@ -24,6 +27,10 @@ def main():
                         action='store_true',
                         help='do not print version')
 
+    parser.add_argument('--version',
+                        action='store_true',
+                        help='print version :-)')
+
     parser.add_argument('file',
                         metavar='FILE',
                         nargs='?',
@@ -31,6 +38,10 @@ def main():
 
     args = parser.parse_args()
     version = generate_version()
+
+    if args.version:
+        print("Versions version {} :-)".format(VERSION))
+        sys.exit(0)
 
     file_name = (args.file or
                  os.environ.get('VERSIONS_FILE') or
