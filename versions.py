@@ -7,6 +7,8 @@ from time import time
 
 VERSION = '2.0'
 
+ENV_PERFIXES = ['VERSIONS_', 'PLUGIN_']
+
 
 def int2base(num, base, numerals="0123456789abcdefghijklmnopqrstuvwxyz"):
     if num == 0:
@@ -20,8 +22,34 @@ def generate_version():
     return int2base(int(time()), 36)
 
 
+def _get_fix(arg, env_variable):
+    if arg is not None:
+        fix = arg
+    else:
+        for var in [epx + env_variable for epx in ENV_PERFIXES]:
+            fix = os.environ.get(var, '')
+            if fix:
+                break
+
+    if fix and len(fix) > 1 and fix[0] == '@':
+        with open(fix[1:]) as f:
+            fix = f.read().strip()
+
+    return fix
+
+
 def main():
     parser = argparse.ArgumentParser(description='Version number generator.')
+
+    parser.add_argument('--prefix',
+                        metavar='STRING',
+                        default=None,
+                        help='prefix for version')
+
+    parser.add_argument('--suffix',
+                        metavar='STRING',
+                        default=None,
+                        help='suffix for version')
 
     parser.add_argument('--silent', '-s',
                         action='store_true',
@@ -37,7 +65,6 @@ def main():
                         help='file for save version')
 
     args = parser.parse_args()
-    version = generate_version()
 
     if args.version:
         print("Versions version {} :-)".format(VERSION))
@@ -46,6 +73,11 @@ def main():
     file_name = (args.file or
                  os.environ.get('VERSIONS_FILE') or
                  os.environ.get('PLUGIN_FILE'))  # for drone.io plugin
+
+    prefix = _get_fix(args.prefix, 'PREFIX')
+    suffix = _get_fix(args.suffix, 'SUFFIX')
+
+    version = prefix + generate_version() + suffix
 
     if file_name:
         dir_name = os.path.dirname(file_name)
