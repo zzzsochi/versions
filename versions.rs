@@ -65,7 +65,20 @@ fn get_fix(mut value: String, env_name: String) -> std::io::Result<String> {
     return Ok(value);
 }
 
-fn write_file(path: &String, version: &String) -> std::io::Result<()> {
+
+fn get_file_path(mut path: String) -> Result<String, String> {
+    if path.is_empty() {
+        path = match env::var("PLUGIN_FILE") {
+            Ok(val) => val,
+            Err(_e) => String::from(""),
+        };
+    }
+
+    return Ok(path)
+}
+
+
+fn write_file(path: String, version: &String) -> std::io::Result<()> {
     let mut file = File::create(path)?;
     file.write_all(version.as_bytes())?;
     Ok(())
@@ -109,6 +122,7 @@ fn main() {
                                 .takes_value(true)
                                 .help("suffix for version"))
                             .arg(Arg::with_name("file")
+                                .env("VERSIONS_FILE")
                                 .value_name("FILE")
                                 .takes_value(true)
                                 .help("file for save version"))
@@ -120,23 +134,29 @@ fn main() {
     }
 
     let vers: String = versions();
-    let prefix = match get_fix(matches.value_of("prefix").unwrap_or("").to_string(), String::from("PRUGIN_PREFIX")) {
+    let prefix = match get_fix(matches.value_of("prefix").unwrap_or("").to_string(),
+                               String::from("PRUGIN_PREFIX")) {
         Ok(val) => val,
         Err(e) => file_read_error(e),
     };
-    let suffix = match get_fix(matches.value_of("suffix").unwrap_or("").to_string(), String::from("PRUGIN_SUFFIX")) {
+    let suffix = match get_fix(matches.value_of("suffix").unwrap_or("").to_string(),
+                               String::from("PRUGIN_SUFFIX")) {
         Ok(val) => val,
         Err(e) => file_read_error(e),
     };
 
     let result = format!("{}{}{}", prefix, vers, suffix);
 
-    if matches.is_present("file") {
-        let path = matches.value_of("file").unwrap().to_string();
-        let write_result = write_file(&path, &result);
-        match write_result {
-            Ok(v) => v,
-            Err(e) => file_write_error(e),
+    {
+        let path = match get_file_path(matches.value_of("file").unwrap_or("").to_string()) {
+            Ok(path) => path,
+            Err(_e) => String::from(""),
+        };
+        if !path.is_empty() {
+            match write_file(path, &result) {
+                Ok(_v) => (),
+                Err(e) => file_write_error(e),
+            }
         }
     }
 
