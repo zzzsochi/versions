@@ -1,0 +1,21 @@
+[package]
+name = "versions"
+version = "3.0.0"
+authors = ["Alexander Zelenyak <zzz.sochi@gmail.com>"]
+
+[[bin]]
+name = "versions"
+path = "versions.rs"
+# crate-type = ["staticlib"]
+
+[profile.release]
+opt-level = 3
+debug = false
+rpath = false
+lto = false
+debug-assertions = false
+codegen-units = 1
+panic = 'unwind'
+
+[dependencies]
+clap = "2.31"

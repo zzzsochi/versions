@@ -2,7 +2,7 @@
 Versions
 ========
 
-Small tool for generate version-string from ``time.time()``.
+Small tool for generate version-string from Unix timestamp.
 
 
 Usage
@@ -67,4 +67,4 @@ Plugin for drone.io
 Future
 ======
 
-Rewrite on RUST.
+- Setup precise.
