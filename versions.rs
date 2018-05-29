@@ -135,12 +135,12 @@ fn main() {
 
     let vers: String = versions();
     let prefix = match get_fix(matches.value_of("prefix").unwrap_or("").to_string(),
-                               String::from("PRUGIN_PREFIX")) {
+                               String::from("PLUGIN_PREFIX")) {
         Ok(val) => val,
         Err(e) => file_read_error(e),
     };
     let suffix = match get_fix(matches.value_of("suffix").unwrap_or("").to_string(),
-                               String::from("PRUGIN_SUFFIX")) {
+                               String::from("PLUGIN_SUFFIX")) {
         Ok(val) => val,
         Err(e) => file_read_error(e),
     };
