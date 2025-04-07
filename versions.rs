@@ -8,7 +8,7 @@ use std::fs::File;
 use std::time::{SystemTime, UNIX_EPOCH};
 use clap::{Arg, App};
 
-const VERSION: &str = "3.2";
+const VERSION: &str = "3.3";
 const BASE: usize = 36;
 const NUMERALS: [char; BASE] = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
                                 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
