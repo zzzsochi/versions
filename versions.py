@@ -5,7 +5,7 @@ import os
 import sys
 from time import time
 
-VERSION = '2.0'
+VERSION = '3.3'
 
 ENV_PERFIXES = ['VERSIONS_', 'PLUGIN_']
 
